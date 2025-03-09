@@ -65,9 +65,8 @@ const resources = [
   description="Hardware Hacking Projects for All Skill Levels"
 >
   <div class="flex">
-    <!-- Sidebar Navigation -->
-    <div class="w-64 bg-blue-200 min-h-screen p-6 border-r">
-      <h2 class="text-lg font-semibold mb-4">Projects</h2>
+    <!-- Sidebar Navigation - hidden on mobile -->
+    <div class="hidden md:block w-64 bg-blue-200 min-h-screen p-6 border-r">
       <nav>
         <div class="space-y-6">
           {
@@ -102,12 +101,11 @@ const resources = [
       </nav>
     </div>
 
-    <!-- Main Content -->
+    <!-- Main Content - full width on mobile -->
     <div class="flex-1 max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
       <h1 class="text-3xl font-bold mb-8">Hardware Projects</h1>
       <p class="text-lg text-gray-600 mb-12">
-        Choose your skill level to get started with hardware projects, then
-        choose the project from the side navigation.
+        Choose your skill level to get started with hardware projects.
       </p>
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -130,9 +128,12 @@ const resources = [
                   </p>
                   <div class="space-y-2 mb-6">
                     {projectList.map((project) => (
-                      <div class="text-sm text-gray-600">
+                      <a
+                        href={`/projects/${project.slug}`}
+                        class="underline block text-sm text-gray-600 hover:text-blue-600"
+                      >
                         • {project.data.title}
-                      </div>
+                      </a>
                     ))}
                   </div>
                 </div>
@@ -141,7 +142,6 @@ const resources = [
           )
         }
       </div>
-
     </div>
   </div>
 </Layout>

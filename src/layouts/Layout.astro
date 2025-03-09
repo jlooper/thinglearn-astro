@@ -21,6 +21,14 @@ const isActive = (path: string) => {
   }
   return currentPath.startsWith(path);
 };
+
+// Add state for mobile menu
+const menuItems = [
+  { href: "/curriculum", text: "Curriculum" },
+  { href: "/projects", text: "Projects" },
+  { href: "/resources", text: "Resources" },
+  { href: "/about", text: "About" },
+];
 ---
 
 <!doctype html>
@@ -34,54 +42,76 @@ const isActive = (path: string) => {
     <title>{title} | ThingLearn</title>
   </head>
   <body class="flex flex-col min-h-screen">
-    <header class="bg-blue-400 shadow-sm">
+    <header class="bg-blue-400 shadow-sm relative">
       <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
           {/* Logo */}
           <div class="flex-shrink-0 flex items-center">
-            <a href="/" class="text-xl font-bold text-white"> ThingLearn </a>
+            <a href="/" class="text-xl font-bold text-white">ThingLearn</a>
           </div>
 
-          {/* Navigation Links */}
+          {/* Mobile menu button */}
+          <div class="sm:hidden flex items-center">
+            <button
+              type="button"
+              class="text-white hover:text-blue-100"
+              aria-controls="mobile-menu"
+              aria-expanded="false"
+              id="mobile-menu-button"
+            >
+              <span class="sr-only">Open main menu</span>
+              <svg
+                class="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 6h16M4 12h16M4 18h16"></path>
+              </svg>
+            </button>
+          </div>
+
+          {/* Desktop navigation */}
           <div class="hidden sm:flex sm:items-center sm:space-x-8">
-            <a
-              href="/curriculum"
-              class={`inline-flex items-center px-1 pt-1 text-sm font-medium text-white hover:text-blue-100 border-b-2 ${
-                isActive("/curriculum")
-                  ? "border-green-500"
-                  : "border-transparent"
-              }`}
-            >
-              Curriculum
-            </a>
-            <a
-              href="/projects"
-              class={`inline-flex items-center px-1 pt-1 text-sm font-medium text-white hover:text-blue-100 border-b-2 ${
-                isActive("/projects")
-                  ? "border-green-500"
-                  : "border-transparent"
-              }`}
-            >
-              Projects
-            </a>
-            <a
-              href="/resources"
-              class={`inline-flex items-center px-1 pt-1 text-sm font-medium text-white hover:text-blue-100 border-b-2 ${
-                isActive("/resources")
-                  ? "border-green-500"
-                  : "border-transparent"
-              }`}
-            >
-              Resources
-            </a>
-            <a
-              href="/about"
-              class={`inline-flex items-center px-1 pt-1 text-sm font-medium text-white hover:text-blue-100 border-b-2 ${
-                isActive("/about") ? "border-green-500" : "border-transparent"
-              }`}
-            >
-              About
-            </a>
+            {
+              menuItems.map((item) => (
+                <a
+                  href={item.href}
+                  class={`inline-flex items-center px-1 pt-1 text-sm font-medium text-white hover:text-blue-100 border-b-2 ${
+                    isActive(item.href)
+                      ? "border-green-500"
+                      : "border-transparent"
+                  }`}
+                >
+                  {item.text}
+                </a>
+              ))
+            }
+          </div>
+        </div>
+
+        {/* Mobile menu */}
+        <div
+          class="hidden sm:hidden absolute w-full bg-blue-400 left-0 z-50"
+          id="mobile-menu"
+        >
+          <div class="px-2 pt-2 pb-3 space-y-1">
+            {
+              menuItems.map((item) => (
+                <a
+                  href={item.href}
+                  class={`block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-blue-500 ${
+                    isActive(item.href) ? "bg-blue-500" : ""
+                  }`}
+                >
+                  {item.text}
+                </a>
+              ))
+            }
           </div>
         </div>
       </nav>
@@ -94,9 +124,23 @@ const isActive = (path: string) => {
     <footer class="bg-blue-400 text-white py-2 mt-auto">
       <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
         <p class="text-center text-white">
-            © {new Date().getFullYear()} <a href="https://jenlooper.com" target="_blank" class="underline">Jen Looper</a>. All rights reserved.
+          © {new Date().getFullYear()}
+          <a href="https://jenlooper.com" target="_blank" class="underline"
+            >Jen Looper</a
+          >. All rights reserved.
         </p>
       </div>
     </footer>
+
+    <script>
+      const button = document.getElementById("mobile-menu-button");
+      const menu = document.getElementById("mobile-menu");
+
+      button?.addEventListener("click", () => {
+        const expanded = button.getAttribute("aria-expanded") === "true";
+        button.setAttribute("aria-expanded", String(!expanded));
+        menu?.classList.toggle("hidden");
+      });
+    </script>
   </body>
 </html>
