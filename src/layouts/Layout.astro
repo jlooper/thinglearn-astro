@@ -1,0 +1,102 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const {
+  title,
+  description = "Learn hardware hacking through hands-on projects",
+} = Astro.props;
+
+// Get current path
+const currentPath = Astro.url.pathname;
+
+// Helper function to check if link is active
+const isActive = (path: string) => {
+  if (path === "/") {
+    return currentPath === "/";
+  }
+  return currentPath.startsWith(path);
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    <title>{title} | ThingLearn</title>
+  </head>
+  <body class="flex flex-col min-h-screen">
+    <header class="bg-blue-400 shadow-sm">
+      <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
+          {/* Logo */}
+          <div class="flex-shrink-0 flex items-center">
+            <a href="/" class="text-xl font-bold text-white"> ThingLearn </a>
+          </div>
+
+          {/* Navigation Links */}
+          <div class="hidden sm:flex sm:items-center sm:space-x-8">
+            <a
+              href="/curriculum"
+              class={`inline-flex items-center px-1 pt-1 text-sm font-medium text-white hover:text-blue-100 border-b-2 ${
+                isActive("/curriculum")
+                  ? "border-green-500"
+                  : "border-transparent"
+              }`}
+            >
+              Curriculum
+            </a>
+            <a
+              href="/projects"
+              class={`inline-flex items-center px-1 pt-1 text-sm font-medium text-white hover:text-blue-100 border-b-2 ${
+                isActive("/projects")
+                  ? "border-green-500"
+                  : "border-transparent"
+              }`}
+            >
+              Projects
+            </a>
+            <a
+              href="/resources"
+              class={`inline-flex items-center px-1 pt-1 text-sm font-medium text-white hover:text-blue-100 border-b-2 ${
+                isActive("/resources")
+                  ? "border-green-500"
+                  : "border-transparent"
+              }`}
+            >
+              Resources
+            </a>
+            <a
+              href="/about"
+              class={`inline-flex items-center px-1 pt-1 text-sm font-medium text-white hover:text-blue-100 border-b-2 ${
+                isActive("/about") ? "border-green-500" : "border-transparent"
+              }`}
+            >
+              About
+            </a>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="flex-grow bg-blue-200">
+      <slot />
+    </main>
+
+    <footer class="bg-blue-400 text-white py-2 mt-auto">
+      <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+        <p class="text-center text-white">
+            © {new Date().getFullYear()} <a href="https://jenlooper.com" target="_blank" class="underline">Jen Looper</a>. All rights reserved.
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>

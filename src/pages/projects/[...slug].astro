@@ -1,0 +1,93 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getCollection } from "astro:content";
+
+export async function getStaticPaths() {
+  const projectEntries = await getCollection("projects");
+
+  return projectEntries.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+
+// Get all project entries
+const allProjects = await getCollection("projects");
+
+// Map difficulty numbers to labels
+const difficultyLabels = {
+  1: "Beginner",
+  2: "Intermediate",
+  3: "Advanced",
+};
+
+// Group projects by difficulty number
+const groupedProjects = allProjects.reduce((acc, project) => {
+  const difficulty = project.data.difficulty;
+  if (!acc[difficulty]) {
+    acc[difficulty] = [];
+  }
+  acc[difficulty].push(project);
+  return acc;
+}, {});
+
+// Sort by difficulty number
+const orderedGroupedProjects = Object.fromEntries(
+  Object.entries(groupedProjects)
+    .sort(([a], [b]) => Number(a) - Number(b))
+    .map(([difficulty, projects]) => [difficultyLabels[difficulty], projects])
+);
+
+const currentPath = Astro.url.pathname;
+---
+
+<Layout title={entry.data.title}>
+  <div class="flex">
+    <!-- Sidebar -->
+    <div class="w-64 bg-blue-200 min-h-screen p-6 border-r">
+      <h2 class="text-lg font-semibold mb-4">Projects</h2>
+      <nav>
+        <div class="space-y-6">
+          {
+            Object.entries(orderedGroupedProjects).map(
+              ([difficulty, projects]) => (
+                <div>
+                  <h3 class="text-md font-medium mb-2 text-gray-700">
+                    <span>{difficulty} Projects</span>
+                  </h3>
+                  <ul class="space-y-1 pl-4">
+                    {projects.map((project) => (
+                      <li>
+                        <a
+                          href={`/projects/${project.slug}`}
+                          class={`block py-1 px-2 text-sm rounded-md transition-colors ${
+                            currentPath.includes(project.slug)
+                              ? "bg-blue-300 border-l-2 border-green-500"
+                              : "text-gray-600 hover:bg-blue-300"
+                          }`}
+                        >
+                          {project.data.title}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )
+            )
+          }
+        </div>
+      </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 p-8">
+      <h1 class="text-4xl font-bold mb-6">{entry.data.title}</h1>
+      <div class="prose prose-lg max-w-none">
+        <Content />
+      </div>
+    </div>
+  </div>
+</Layout>

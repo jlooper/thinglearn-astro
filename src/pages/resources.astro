@@ -1,0 +1,83 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const resources = [
+  {
+    category: "Community & Projects",
+    items: [
+      {
+        title: "Hackster",
+        description:
+          "Hackster.io is a community-driven center for all kinds of user-built projects. Lots of great creativity here!",
+        link: "https://www.hackster.io",
+      },
+      {
+        title: "IoT For Beginners Curriculum",
+        description:
+          "Built by a team at Microsoft, this full curriculum takes you from farm to table with IoT. Highly recommended!",
+        link: "https://github.com/microsoft/IoT-For-Beginners",
+      },
+    ],
+  },
+  {
+    category: "Components & Supplies",
+    items: [
+      {
+        title: "Adafruit",
+        description:
+          "Go to Adafruit when you need to buy the bits and pieces you need to complete a project. It's the most extensive IoT store on the internet, great video content too!",
+        link: "https://www.adafruit.com",
+      },
+      {
+        title: "SparkFun",
+        description:
+          "SparkFun is a go-to resource to learn about hardware projects and buy the materials you need to make them.",
+        link: "https://www.sparkfun.com",
+      },
+    ],
+  },
+  {
+    category: "Tools",
+    items: [
+      {
+        title: "Arduino IDE",
+        description: "The official Arduino development environment.",
+        link: "https://www.arduino.cc/en/software",
+      }
+     
+    ],
+  }
+];
+---
+
+<Layout
+  title="Resources"
+  description="Hardware Hacking Tools and Learning Resources"
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <h1 class="text-3xl font-bold text-gray-900 mb-8">Resources</h1>
+
+    <div class="space-y-12">
+      {
+        resources.map((category) => (
+          <section>
+            <h2 class="text-2xl font-semibold mb-6">{category.category}</h2>
+            <div class="grid gap-6 md:grid-cols-2">
+              {category.items.map((item) => (
+                <a
+                  href={item.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="block bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow"
+                >
+                  <h3 class="text-xl font-medium mb-2">{item.title}</h3>
+                  <p class="text-gray-600">{item.description}</p>
+                </a>
+              ))}
+            </div>
+          </section>
+        ))
+      }
+    </div>
+  </div>
+</Layout>

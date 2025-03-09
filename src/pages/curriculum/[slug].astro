@@ -1,0 +1,57 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getCollection } from "astro:content";
+
+export async function getStaticPaths() {
+  const curriculumEntries = await getCollection("curriculum");
+
+  return curriculumEntries.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+
+// Get all curriculum entries for the sidebar
+const allCurriculum = await getCollection("curriculum");
+const currentPath = Astro.url.pathname;
+---
+
+<Layout title={entry.data.title}>
+  <div class="flex">
+    <!-- Sidebar -->
+    <div class="w-64 bg-blue-200 min-h-screen p-6 border-r">
+      <h2 class="text-lg font-semibold mb-4">Curriculum</h2>
+      <nav>
+        <ul class="space-y-2">
+          {
+            allCurriculum.map((item) => (
+              <li>
+                <a
+                  href={`/curriculum/${item.slug}`}
+                  class={`block p-2 hover:bg-gray-200 rounded-md border-l-2 ${
+                    currentPath.includes(item.slug)
+                      ? "border-green-500 bg-blue-300"
+                      : "border-transparent"
+                  }`}
+                >
+                  {item.data.title}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 p-8">
+      <h1 class="text-4xl font-bold mb-6">{entry.data.title}</h1>
+      <div class="prose prose-lg max-w-none">
+        <Content />
+      </div>
+    </div>
+  </div>
+</Layout>

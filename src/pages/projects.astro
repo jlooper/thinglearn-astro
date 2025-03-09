@@ -1,0 +1,147 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { getCollection } from "astro:content";
+
+// Get all projects
+const projects = await getCollection("projects");
+
+// Map difficulty numbers to labels
+const difficultyLabels = {
+  1: "Beginner",
+  2: "Intermediate",
+  3: "Advanced",
+};
+
+// Group projects by difficulty
+const groupedProjects = projects.reduce((acc, project) => {
+  const difficultyLabel = difficultyLabels[project.data.difficulty];
+  if (!acc[difficultyLabel]) {
+    acc[difficultyLabel] = [];
+  }
+  acc[difficultyLabel].push(project);
+  return acc;
+}, {});
+
+// Sort difficulties in correct order
+const orderedDifficulties = ["Beginner", "Intermediate", "Advanced"];
+const orderedGroupedProjects = Object.fromEntries(
+  orderedDifficulties
+    .filter((difficulty) => groupedProjects[difficulty])
+    .map((difficulty) => [difficulty, groupedProjects[difficulty]])
+);
+
+const currentPath = Astro.url.pathname;
+
+const resources = [
+  {
+    title: "Hackster",
+    description:
+      "Hackster.io is a community-driven center for all kinds of user-built projects. Lots of great creativity here!",
+    link: "https://www.hackster.io",
+  },
+  {
+    title: "Adafruit",
+    description:
+      "Go to Adafruit when you need to buy the bits and pieces you need to complete a project. It's the most extensive IoT store on the internet, great video content too!",
+    link: "https://www.adafruit.com",
+  },
+  {
+    title: "SparkFun",
+    description:
+      "SparkFun is a go-to resource to learn about hardware projects and buy the materials you need to make them.",
+    link: "https://www.sparkfun.com",
+  },
+  {
+    title: "IoT For Beginners Curriculum",
+    description:
+      "Built by a team at Microsoft, this full curriculum takes you from farm to table with IoT. Highly recommended!",
+    link: "https://github.com/microsoft/IoT-For-Beginners",
+  },
+];
+---
+
+<Layout
+  title="Projects"
+  description="Hardware Hacking Projects for All Skill Levels"
+>
+  <div class="flex">
+    <!-- Sidebar Navigation -->
+    <div class="w-64 bg-blue-200 min-h-screen p-6 border-r">
+      <h2 class="text-lg font-semibold mb-4">Projects</h2>
+      <nav>
+        <div class="space-y-6">
+          {
+            Object.entries(orderedGroupedProjects).map(
+              ([difficulty, projectList]) => (
+                <div>
+                  <h3 class="text-md font-medium mb-2 text-gray-700">
+                    <a
+                      href={`#${difficulty.toLowerCase()}`}
+                      class="hover:text-blue-600"
+                    >
+                      {difficulty} Projects
+                    </a>
+                  </h3>
+                  <ul class="space-y-1 pl-4">
+                    {projectList.map((project) => (
+                      <li>
+                        <a
+                          href={`/projects/${project.slug}`}
+                          class="block py-1 px-2 text-sm rounded-md transition-colors text-gray-600 hover:bg-blue-300 hover:text-blue-900"
+                        >
+                          {project.data.title}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )
+            )
+          }
+        </div>
+      </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
+      <h1 class="text-3xl font-bold mb-8">Hardware Projects</h1>
+      <p class="text-lg text-gray-600 mb-12">
+        Choose your skill level to get started with hardware projects, then
+        choose the project from the side navigation.
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {
+          Object.entries(orderedGroupedProjects).map(
+            ([difficulty, projectList]) => (
+              <div
+                id={difficulty.toLowerCase()}
+                class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-200 overflow-hidden"
+              >
+                <div class="p-6">
+                  <h2 class="text-2xl font-bold mb-4">{difficulty} Projects</h2>
+                  <p class="text-gray-600 mb-4">
+                    {difficulty === "Beginner" &&
+                      "Perfect for getting started with hardware projects."}
+                    {difficulty === "Intermediate" &&
+                      "Build on your basic skills with more complex projects."}
+                    {difficulty === "Advanced" &&
+                      "Challenge yourself with sophisticated hardware builds."}
+                  </p>
+                  <div class="space-y-2 mb-6">
+                    {projectList.map((project) => (
+                      <div class="text-sm text-gray-600">
+                        • {project.data.title}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )
+          )
+        }
+      </div>
+
+    </div>
+  </div>
+</Layout>
